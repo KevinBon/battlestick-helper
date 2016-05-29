@@ -9,6 +9,10 @@
 
 unsafeWindow.console.log('battlestick-helper: Activated');
 var config = {
+  fakeDeath: {
+    doNotHideName: true,
+    doNotHideLifeBar: true,
+  },
   mine: {
     enemyMineIdentifier: {
       active: true,
@@ -23,23 +27,39 @@ var isMyStickMan = function() {
   return null !== myStickman && this.stickman === myStickman;
 }
 
- // --- Mine ---
+// --- Mine ---
 // Fn: - Enemy mines never hide
-if (config.mine.enemyMineNeverHide) {
-  // unsafeWindow.Mine.prototype.update = function () {
-  //   if (null !== myStickman && this.stickman !== myStickman && myStickman.life > 0) {
-  //   } else null !== myStickman && myStickman.life <= 0 && (this.sprite.alpha = 1)
-  // }
-  unsafeWindow.Mine.prototype._update = unsafeWindow.Mine.prototype.update;
-  unsafeWindow.Mine.prototype.update = function () {
-    this._update();
+unsafeWindow.Mine.prototype._update = unsafeWindow.Mine.prototype.update;
+unsafeWindow.Mine.prototype.update = function () {
+  this._update();
+  if (config.mine.enemyMineNeverHide) {
     this.sprite.alpha = 1;
   }
-}
-if (config.mine.enemyMineIdentifier.active) {
-  unsafeWindow.Mine.prototype._create = unsafeWindow.Mine.prototype.create;
-  unsafeWindow.Mine.prototype.create = function() {
-    this._create();
+};
+// Fn: - Mine colorisation depending on enemy/your
+unsafeWindow.Mine.prototype._create = unsafeWindow.Mine.prototype.create;
+unsafeWindow.Mine.prototype.create = function() {
+  this._create();
+  if (config.mine.enemyMineIdentifier.active) {
     this.sprite.tint = isMyStickMan.call(this) ? config.mine.enemyMineIdentifier.myColor : config.mine.enemyMineIdentifier.enemyColor;;
   }
-}
+};
+// --- Fake Death ---
+Stickman.prototype._displayLifeBar = Stickman.prototype.displayLifeBar;
+Stickman.prototype.displayLifeBar = function () {
+  this._displayLifeBar();
+  if (config.fakeDeath.doNotHideLifeBar) {
+    // Bar background (black)
+    this.graphics.lineStyle(5, 0);
+    this.graphics.moveTo(this.head.position.x - 26 * this.lifeMax / 1000, this.head.position.y - 45);
+    this.graphics.lineTo(this.head.position.x + 25 * this.lifeMax / 1000, this.head.position.y - 45);
+    // Actual life
+    this === myStickman ? this.graphics.lineStyle(3, 3407616) : this.graphics.lineStyle(3, 16724736);
+    this.graphics.moveTo(this.head.position.x - 25 * this.lifeMax / 1000, this.head.position.y - 45);
+    this.graphics.lineTo(this.head.position.x - 25 * this.lifeMax / 1000 + this.life * (49 * this.lifeMax / 1000) / this.lifeMax, this.head.position.y - 45);
+  }
+  // Name
+  if (config.fakeDeath.doNotHideName) {
+    this.nickname.text = this.name;
+  }
+};
