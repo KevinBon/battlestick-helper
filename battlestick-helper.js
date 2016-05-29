@@ -2,7 +2,7 @@
 // @name        BattleStick Helper
 // @namespace   http://battlestick.net/
 // @include     http://battlestick.net/
-// @version     1.2.0
+// @version     1.3.0
 // @grant       none
 // @run-at      document-end
 // ==/UserScript==
@@ -20,7 +20,13 @@ var config = {
       enemyColor: 0xff00ff, // Violet
     },
     enemyMineNeverHide: true
-  }
+  },
+  stickman: {
+    recolor: {
+      active: true,
+      enemyColor: 0xff00ff, // Violet
+    },
+  },
 };
 // Helper
 var isMyStickMan = function() {
@@ -29,16 +35,16 @@ var isMyStickMan = function() {
 
 // --- Mine ---
 // Fn: - Enemy mines never hide
-unsafeWindow.Mine.prototype._update = unsafeWindow.Mine.prototype.update;
-unsafeWindow.Mine.prototype.update = function () {
+Mine.prototype._update = Mine.prototype.update;
+Mine.prototype.update = function () {
   this._update();
   if (config.mine.enemyMineNeverHide) {
     this.sprite.alpha = 1;
   }
 };
 // Fn: - Mine colorisation depending on enemy/your
-unsafeWindow.Mine.prototype._create = unsafeWindow.Mine.prototype.create;
-unsafeWindow.Mine.prototype.create = function() {
+Mine.prototype._create = Mine.prototype.create;
+Mine.prototype.create = function() {
   this._create();
   if (config.mine.enemyMineIdentifier.active) {
     this.sprite.tint = isMyStickMan.call(this) ? config.mine.enemyMineIdentifier.myColor : config.mine.enemyMineIdentifier.enemyColor;;
@@ -60,6 +66,20 @@ Stickman.prototype.displayLifeBar = function () {
   }
   // Name
   if (config.fakeDeath.doNotHideName) {
-    this.nickname.text = this.name;
+    if (this.life > 0) {
+      this.nickname.text = this.name;
+    }
+  }
+};
+//
+Stickman.prototype._create = Stickman.prototype.create;
+Stickman.prototype.create = function () {
+  this._create();
+  if (config.stickman.recolor.active) {
+    if (this !== myStickman) {
+      this.sprites.forEach(function(spr) {
+        spr.tint = config.stickman.recolor.enemyColor;
+      });
+    }
   }
 };
