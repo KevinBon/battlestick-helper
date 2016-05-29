@@ -8,6 +8,22 @@
 // ==/UserScript==
 
 unsafeWindow.console.log('battlestick-helper: Activated');
+var enums = {
+  SKINS: {
+    BEAR: 'bear',
+    CLASSICAL: 'classical', // Default
+    COWBOY: 'cowboy',
+    HITSTICK: 'hitstick',
+    JVC: 'jvc',
+    MILITARY: 'military',
+    MOOMAN: 'mooman',
+    MUSCLOR: 'musclor',
+    NINJA: 'ninja',
+    SCIENTIST: 'scientist',
+    STICKCENA: 'stickcena',
+  },
+};
+
 var config = {
   fakeDeath: {
     doNotHideName: true,
@@ -22,10 +38,13 @@ var config = {
     enemyMineNeverHide: true
   },
   stickman: {
+    speedRun: 350, // default: 250
+    speedJump: 550, // default: 400
     recolor: {
       active: true,
       enemyColor: 0xff00ff, // Violet
     },
+    skin: enums.SKIN.NINJA
   },
 };
 // Helper
@@ -71,7 +90,8 @@ Stickman.prototype.displayLifeBar = function () {
     }
   }
 };
-//
+// Enemy stickman recolorisation
+// Stickman attribute changes
 Stickman.prototype._create = Stickman.prototype.create;
 Stickman.prototype.create = function () {
   this._create();
@@ -81,5 +101,10 @@ Stickman.prototype.create = function () {
         spr.tint = config.stickman.recolor.enemyColor;
       });
     }
+  }
+  if (this === myStickman) {
+    this.speedRun = config.stickman.speedRun;
+    this.speedJump = config.stickman.speedJump;
+    this.skin = config.stickman.skin;
   }
 };
