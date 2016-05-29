@@ -26,9 +26,14 @@ var isMyStickMan = function() {
  // --- Mine ---
 // Fn: - Enemy mines never hide
 if (config.mine.enemyMineNeverHide) {
+  // unsafeWindow.Mine.prototype.update = function () {
+  //   if (null !== myStickman && this.stickman !== myStickman && myStickman.life > 0) {
+  //   } else null !== myStickman && myStickman.life <= 0 && (this.sprite.alpha = 1)
+  // }
+  unsafeWindow.Mine.prototype._update = unsafeWindow.Mine.prototype.update;
   unsafeWindow.Mine.prototype.update = function () {
-    if (null !== myStickman && this.stickman !== myStickman && myStickman.life > 0) {
-    } else null !== myStickman && myStickman.life <= 0 && (this.sprite.alpha = 1)
+    this._update();
+    this.sprite.alpha = 1;
   }
 }
 if (config.mine.enemyMineIdentifier.active) {
