@@ -10,3 +10,5 @@ FakeDeath:
 
 Stickman:
 + Enemy recolorisation
++ Run speed attribute changeable
++ Jump speed attribute changeable
