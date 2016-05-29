@@ -2,7 +2,7 @@
 // @name        BattleStick Helper
 // @namespace   http://battlestick.net/
 // @include     http://battlestick.net/
-// @version     1
+// @version     1.0.0
 // @grant       none
 // @run-at      document-end
 // ==/UserScript==
